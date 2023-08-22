@@ -1,0 +1,40 @@
+version: '3'
+services:
+  mqtt-broker:
+    image: eclipse-mosquitto
+    ports:
+      - "1883:1883"
+
+  mqtt-publisher:
+    build:
+      context: .
+      dockerfile: Dockerfile.publisher
+    depends_on:
+      - mqtt-broker
+
+  mqtt-subscriber:
+    build:
+      context: .
+      dockerfile: Dockerfile.subscriber
+    depends_on:
+      - mqtt-broker
+
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile.fastapi
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+      - redis
